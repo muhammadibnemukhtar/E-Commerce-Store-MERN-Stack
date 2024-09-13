@@ -16,13 +16,13 @@ const getAllUserHandle = async (req, res) => {
 // Create New User
 const newUserHandle = async (req, res) => {
   const user = req.body;
-  //   console.log(user);
+  console.log(user);
   try {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     const newUser = await new User(user);
     await newUser.save();
-    res.status(200).send("User created successfully");
+    res.status(201).send("User created successfully");
   } catch (error) {
     res.status(500).send(error);
   }
@@ -49,7 +49,7 @@ const loginHandle = async (req, res) => {
         return res.status(200).send(token);
       }
     } else {
-      return res.send("Invalid Email or Password");
+      return res.status(401).send("Invalid Email or Password");
     }
   } catch (error) {
     res.status(500).send(error);
