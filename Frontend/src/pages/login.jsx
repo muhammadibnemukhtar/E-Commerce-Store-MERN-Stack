@@ -1,11 +1,15 @@
 import axios from "axios";
 import { Field, Form, Formik, ErrorMessage } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import * as yup from "yup";
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { adminLogin, login } from "../redux/features/login&AdminSlicer";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const defaultValues = {
     password: "",
@@ -25,7 +29,10 @@ const Login = () => {
     );
     console.log(response.data);
     Cookies.set("token", response.data);
+    const user = jwtDecode(response.data);
+    console.log(user);
     if (response.status === 200) {
+      user.admin === true ? dispatch(adminLogin(user.id)) : dispatch(login());
       navigate("/");
     }
   };

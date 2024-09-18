@@ -37,13 +37,23 @@ const loginHandle = async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       if (user.isAdmin) {
         const token = JWT.sign(
-          { email: user.email, id: user.id, name: user.name },
+          {
+            email: user.email,
+            id: user.id,
+            name: user.name,
+            admin: user.isAdmin,
+          },
           process.env.JWT_ADMIN_SECRET
         );
         return res.status(200).send(token);
       } else {
         const token = JWT.sign(
-          { email: user.email, id: user.id, name: user.name },
+          {
+            email: user.email,
+            id: user.id,
+            name: user.name,
+            admin: user.isAdmin,
+          },
           process.env.JWT_SECRET
         );
         return res.status(200).send(token);

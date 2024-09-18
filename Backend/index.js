@@ -6,6 +6,7 @@ const { connect } = require("mongoose");
 const app = express();
 const PORT = process.env.PORT;
 const User = require("./routes/user");
+const Product = require("./routes/product");
 
 // Middleware
 app.use(express.json());
@@ -21,3 +22,4 @@ connect(process.env.MONGO_URL)
 
 // Routes
 app.use("/user", User);
+app.use("/products", Product);
