@@ -1,15 +1,21 @@
 import axios from "axios";
 import { Field, Form, Formik, ErrorMessage } from "formik";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import * as yup from "yup";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { adminLogin, login } from "../redux/features/login&AdminSlicer";
 import { jwtDecode } from "jwt-decode";
+import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location =useLocation();
+  const [warning, setWarning] = useState("");
+
+  const from = location.state?.from || "/";
+  console.log(from);
 
   const defaultValues = {
     password: "",
@@ -22,27 +28,39 @@ const Login = () => {
   });
 
   const handleSubmit = async (values) => {
-    console.log(values);
+    try{
     const response = await axios.post(
       "http://localhost:5000/user/login",
       values
     );
     console.log(response.data);
-    Cookies.set("token", response.data);
+    if (response.status === 200) {
     const user = jwtDecode(response.data);
     console.log(user);
-    if (response.status === 200) {
       user.admin === true ? dispatch(adminLogin(user.id)) : dispatch(login());
-      navigate("/");
+      Cookies.set("token", response.data);
+      // navigate("/");
+      navigate(from);
+    }}catch(err){
+      if (err.response && err.response.status === 500) {
+        setWarning("Server error try again later");
+      }
+      else if (err.response && err.response.status === 401){
+        setWarning("Invalid username or password!")
     }
+    else setWarning("Network Error!")
   };
+};
 
   return (
-    <div className="flex items-center justify-center h-screen max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl bg-[#323637]">
-      <div className="flex flex-col items-center justify-center w-3/4 md:w-1/2 lg:w-1/2 xl:w-[30%] h-[30%] md:h-[40%] lg:h-[50%] bg-[#ff7004] px-3 pt-4 lg:pt-5  rounded-xl">
-        <h1 className="text-3xl text-white font-semibold pt-1 lg:py-1">
+    <div className="flex items-center justify-center h-screen max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl bg-gray-700">
+      <div className="flex flex-col items-center justify-center w-3/4 md:w-1/2 lg:w-1/2 xl:w-[30%] h-[30%] md:h-[40%] lg:h-[50%] bg-[#ff9300] px-3 pt-4 lg:pt-5  rounded-xl">
+        <h1 className="text-3xl text-white font-semibold pt-1 lg:pt-0">
           Welcome
         </h1>
+        {warning && (
+              <h2 className="text-white font-normal text-sm">{warning}</h2>
+            )}
         <Formik
           initialValues={defaultValues}
           validationSchema={validationSchema}
@@ -89,7 +107,7 @@ const Login = () => {
               Submit
             </button>
             <p className="text-[8px] lg:text-[12px] text-white mt-3 lg:mt-4">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <span
                 className="text-[8px] lg:text-[12px] text-white hover:underline hover:cursor-pointer"
                 onClick={() => navigate("/signup")}

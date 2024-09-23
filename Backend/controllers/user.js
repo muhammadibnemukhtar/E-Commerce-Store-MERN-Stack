@@ -20,7 +20,10 @@ const newUserHandle = async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
-    const newUser = await new User(user);
+    const existingUser = User.find({email: user.email,name: user.name});
+    if (existingUser){
+      return res.status(409).send("Email or Username already exist!");
+    }
     await newUser.save();
     res.status(201).send("User created successfully");
   } catch (error) {
@@ -66,4 +69,24 @@ const loginHandle = async (req, res) => {
   }
 };
 
-module.exports = { getAllUserHandle, newUserHandle, loginHandle };
+
+const tokenLoginHandle = async (req, res) => {
+  const token = req.header("x-auth-token");
+  console.log(token);
+  try {
+    const varified = JWT.verify(token, process.env.JWT_ADMIN_SECRET)
+    console.log(varified);
+    const user = await User.findById(varified.id);
+    console.log(user);
+    if (user) {
+      return res.status(200).send(token);
+    } else {
+      return res.status(404).send("User not found");
+    }
+  }
+  catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+module.exports = { getAllUserHandle, newUserHandle, loginHandle, tokenLoginHandle };

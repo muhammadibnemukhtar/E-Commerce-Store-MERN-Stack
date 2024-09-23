@@ -4,6 +4,7 @@ const {
   getAllUserHandle,
   newUserHandle,
   loginHandle,
+  tokenLoginHandle,
 } = require("../controllers/user");
 const admin = require("../middlewares/authorization");
 
@@ -15,6 +16,7 @@ userRouter.route("/signup").post(newUserHandle);
 
 // Login
 userRouter.route("/login").post(loginHandle);
+userRouter.route("/login").get(tokenLoginHandle);
 
 // Update User
 userRouter.route("/:id").put();

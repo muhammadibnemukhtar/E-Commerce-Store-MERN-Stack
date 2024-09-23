@@ -1,10 +1,12 @@
 import axios from "axios";
 import { Field, Form, Formik, ErrorMessage } from "formik";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [warning, setWarning] = useState("");
   const defaultValues = {
     name: "",
     password: "",
@@ -18,23 +20,37 @@ const Signup = () => {
   });
 
   const handleSubmit = async (values) => {
-    console.log(values);
-    const response = await axios.post(
-      "http://localhost:5000/user/signup",
-      values
-    );
-    console.log(response);
-    if (response.status === 201) {
-      navigate("/login");
+    try{
+      const response = await axios.post(
+        "http://localhost:5000/user/signup",
+        values
+      );
+      console.log(response);
+      if (response.status === 201) {
+        navigate("/login");
+      }
+  }catch(err){
+    if (err.response && err.response.status === 500) {
+      setWarning("Server error, please try again later");
     }
+    else if (err.response && err.response.status === 409) {
+      setWarning("Username or email already exists");
+    }
+     else {
+      setWarning("Network error, please check your connection");
+    }
+  }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl bg-[#323637]">
-      <div className="flex flex-col items-center justify-center w-3/4 md:w-1/2 lg:w-3/5 xl:w-1/3 h-[30%] md:h-[40%] lg:h-3/5 bg-[#ff7004] px-3 pt-2 lg:pt-5  rounded-xl">
-        <h1 className="text-3xl text-white font-semibold pt-1 lg:py-1">
+    <div className="flex items-center justify-center h-screen max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl bg-gray-700">
+      <div className="flex flex-col items-center justify-center w-3/4 md:w-1/2 lg:w-3/5 xl:w-1/3 h-[30%] md:h-[40%] lg:h-3/5 bg-[#ff9300] px-3 pt-2 lg:pt-5  rounded-xl">
+        <h1 className="text-2xl text-white font-semibold pt-1 lg:pt-1">
           Welcome
         </h1>
+        {warning && (
+              <h2 className="text-white font-normal text-sm">{warning}</h2>
+            )}
         <Formik
           initialValues={defaultValues}
           validationSchema={validationSchema}

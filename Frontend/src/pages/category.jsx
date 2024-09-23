@@ -6,17 +6,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { setProducts } from "../redux/features/productsSlicer";
 import { useParams } from "react-router-dom";
 import Clothing from "../assets/clothes_banner.png";
+import jewelery from "../assets/jewelery.jpg";
+import electronics from "../assets/Electronics.jpg";
+import grocery from "../assets/10022428.jpg";
 
 const Category = () => {
   const products = useSelector((state) => state.products.products);
+  const cartItems = useSelector((state) => state.cart.cart);
   const [filteredProducts, setFilteredProducts] = useState(products);
   const dispatch = useDispatch();
   const category = useParams().category;
-  console.log(category);
+  // console.log(category);
 
   const allProduct = async () => {
     const response = await axios.get("http://localhost:5000/products");
-    console.log(response.data);
+    // console.log(response.data);
     dispatch(setProducts(response.data));
   };
   const filter = () => {
@@ -29,6 +33,7 @@ const Category = () => {
     setFilteredProducts(filteredProducts);
   };
 
+  // console.log(cartItems);
   console.log(filteredProducts);
 
   useEffect(() => {
@@ -42,8 +47,15 @@ const Category = () => {
   return (
     <div className="flex flex-col mb-10">
       <Navbar />
-      {/* <h1>Products</h1> */}
-      <img src={Clothing} alt="banner" className="w-full" />
+      {category == "Clothing" ? (
+        <img src={Clothing} alt="banner" className="w-full" />
+      ) : category == "Jewelery" ? (
+        <img src={jewelery} alt="banner" className="w-full" />
+      ) : category == "Electronics" ? (
+        <img src={electronics} alt="banner" className="w-full" />
+      ) : category == "Grocery" ? (
+        <img src={grocery} alt="banner" className="w-full" />
+      ) : null}
       <div className="flex items-center justify-center bg-gray-700">
         <h1 className="text-2xl font-semibold text-white self-center my-3 ">
           {category}
@@ -59,6 +71,7 @@ const Category = () => {
                 imageUrl={product.imageUrl}
                 category={product.category}
                 _id={product._id}
+                item={product}
               />
             </div>
           );

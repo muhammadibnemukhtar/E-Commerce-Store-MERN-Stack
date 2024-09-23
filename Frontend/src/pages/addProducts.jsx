@@ -3,6 +3,8 @@ import { Field, Form, Formik, ErrorMessage } from "formik";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import Navbar from "../components/navbar";
+import cookie from "js-cookie";
 
 const AddProducts = () => {
   const navigate = useNavigate();
@@ -27,20 +29,25 @@ const AddProducts = () => {
 
   const handleSubmit = async (values) => {
     values.userId = userId;
-    console.log(values);
+    // console.log(values);
+    const token = cookie.get("token");
     const response = await axios.post(
       "http://localhost:5000/products/add",
-      values
+      values, {headers: {
+        "x-auth-token": token,
+      }}
     );
     console.log(response);
     if (response.status === 201) {
-      navigate("/login");
+      navigate("/products");
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl bg-[#323637]">
-      <div className="flex flex-col items-center justify-center w-3/4 md:w-1/2 lg:w-3/5 xl:w-1/3 h-[30%] md:h-[40%] lg:h-3/4 bg-[#ff7004] px-3 pt-2 lg:pt-3  rounded-xl">
+    <>
+    <Navbar/>
+    <div className="flex items-center justify-center h-screen max-w-screen-sm md:max-w-screen-md lg:max-w-screen-2xl bg-gray-700">
+      <div className="flex flex-col items-center justify-center w-3/4 md:w-1/2 lg:w-3/5 xl:w-1/3 h-[30%] md:h-[40%] lg:h-3/4 bg-[#ff9300] px-3 pt-2 lg:pt-3  rounded-xl">
         <h1 className="text-xl lg:text-3xl text-white font-semibold pb-2 lg:pb-4">
           Add Product Details
         </h1>
@@ -142,6 +149,7 @@ const AddProducts = () => {
         </Formik>
       </div>
     </div>
+    </>
   );
 };
 

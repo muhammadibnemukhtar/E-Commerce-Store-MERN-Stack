@@ -40,6 +40,7 @@ const Products = () => {
                 imageUrl={product.imageUrl}
                 category={product.category}
                 _id={product._id}
+                item={product}
               />
             </div>
           );

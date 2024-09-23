@@ -6,12 +6,13 @@ import Products from "./pages/Products";
 import AddProducts from "./pages/addProducts";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import Register from "./pages/Register";
-import { useSelector } from "react-redux";
 import Category from "./pages/category";
 import ProductDetail from "./pages/productDetail";
+import Cart from "./pages/cart";
+import PaymentSuccess from "./pages/paymentSuccess";
+import PaymentCanclled from "./pages/paymentCancelled";
 
 const App = () => {
-  const loggedin = useSelector((state) => state.loginAdmin.loggedin);
 
   return (
     <Routes>
@@ -22,11 +23,14 @@ const App = () => {
       <Route path="/products" element={<Products />} />
       <Route path="/products/:category" element={<Category />} />
       <Route path="/products/:category/:id" element={<ProductDetail />} />
+      <Route path="/paymentsuccess" element={<PaymentSuccess />} />
+      <Route path="/paymentcanclled" element={<PaymentCanclled />} />
 
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/addProducts" element={<AddProducts />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/cart" element={<Cart />} />
       </Route>
 
       {/* Catch-all route */}

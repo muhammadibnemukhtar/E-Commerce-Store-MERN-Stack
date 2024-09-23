@@ -8,7 +8,7 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     if (!loggedin) {
-      navigate("/login");
+      navigate("/login", { state: { from: window.location.pathname } });
     }
   }, [loggedin, navigate]);
 

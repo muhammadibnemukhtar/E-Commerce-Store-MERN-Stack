@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT;
 const User = require("./routes/user");
 const Product = require("./routes/product");
+const Payment = require("./routes/stripe");
 
 // Middleware
 app.use(express.json());
@@ -23,3 +24,4 @@ connect(process.env.MONGO_URL)
 // Routes
 app.use("/user", User);
 app.use("/products", Product);
+app.use("/checkout", Payment);

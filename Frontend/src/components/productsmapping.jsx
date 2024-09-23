@@ -1,9 +1,15 @@
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setCart } from "../redux/features/cartSlice";
 
 const ProductsMapping = (props) => {
+
+  const dispatch = useDispatch();
+  const loggedin = useSelector((state)=> state.loginAdmin.loggedin);
   const navigate = useNavigate();
+
   return (
-    <div className="flex flex-col items-center justify-between px-4 pt-4 pb-2.5 shadow-lg bg-gray-300 w-64 h-80 hover:scale-95 duration-300 cursor-pointer ">
+    <div className="flex flex-col items-center justify-between px-4 pt-4 pb-2.5 shadow-lg  bg-gray-300 w-64 h-80 hover:scale-95 duration-300 cursor-pointer ">
       <div className="w-full aspect-w-1 h-3/4 flex items-center justify-center bg-white overflow-hidden group-hover:scale-105 duration-300 p-2.5 group position-relative">
         <img
           src={props.imageUrl}
@@ -15,7 +21,10 @@ const ProductsMapping = (props) => {
           height="30"
           src="https://img.icons8.com/ios-glyphs/30/f59800/fast-cart.png"
           alt="fast-cart"
-          className="absolute top-6 right-6 bg-gray-200 p-1 invisible group-hover:visible ease-in"
+          className="absolute top-6 right-6 bg-gray-200 p-1 invisible group-hover:visible ease-in active:scale-[85%] duration-200"
+          onClick={() => { loggedin?
+            dispatch(setCart([props.item,1])):navigate("/login")
+          }}
         />
       </div>
       <div className="w-full mt-1 flex flex-col items-center justify-around h-1/4">
